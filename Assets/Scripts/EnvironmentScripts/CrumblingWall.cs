@@ -6,6 +6,7 @@ public class CrumblingWall : MonoBehaviour
     public int cubeCount = 10;          // Number of cubes the wall breaks into
     public Vector3 cubeScale = new Vector3(0.5f, 0.5f, 0.5f); // Size of the broken cubes
     public float explosionForce = 500f; // Explosion force to apply on the broken cubes
+    public float destroyDelay = 5f;     // Delay time before destroying the cubes
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -45,7 +46,7 @@ public class CrumblingWall : MonoBehaviour
             Collider collider = brokenCube.GetComponent<Collider>();
             if (collider != null)
             {
-                collider.enabled = false; // Enable the collider for the cubes
+                collider.enabled = false; // Disable the collider for now
             }
 
             // Add Rigidbody if not already added to the prefab
@@ -60,6 +61,9 @@ public class CrumblingWall : MonoBehaviour
 
             // Optionally add some rotation to simulate random rotation of the broken pieces
             brokenCube.transform.Rotate(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360));
+
+            // Destroy the cube after 5 seconds
+            Destroy(brokenCube, destroyDelay);
         }
     }
 }

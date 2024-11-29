@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,26 +8,24 @@ public class PlayerMovement : MonoBehaviour
     public float speed;
     private int maxJumps = 2;
     public int jumpCount;
-    private Vector3 movementCheck;
     private Rigidbody rb;
-    
     private Collider playerCollider;
 
-   
     // Start is called before the first frame update
     void Start()
     {
         jumpCount = 0;
         rb = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
-
     }
 
+    // Handle movement input
     public void OnMove(InputValue value)
     {
         moveValue = value.Get<Vector2>();
     }
 
+    // Handle jump input
     public void OnJump(InputValue value)
     {
         if (jumpCount < maxJumps)
@@ -38,29 +35,27 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // FixedUpdate is used for physics-based movement
     void FixedUpdate()
     {
-        
+        // Restrict movement to X-axis only (Z will stay at 0)
+        Vector3 movement = new Vector3(moveValue.x * speed, rb.velocity.y, 0f);  // Zero out Z-axis
+        rb.velocity = movement; // Apply movement to Rigidbody velocity
 
-        movementCheck.x = Input.GetAxisRaw("Horizontal");
-        movementCheck.y = 0f;
-        movementCheck.z = 0f;
-
-        if (movementCheck.x != 0)
-        {
-            RotatePlayer(movementCheck.x);
-        }
-
-        Vector3 movement = new Vector3(moveValue.x, 0.0f, 0.0f);  // Ensure Z movement is 0
-        Vector3 newPosition = rb.position + (movement * speed * Time.fixedDeltaTime);
-        rb.MovePosition(newPosition);
+        // Ensure rotation happens in FixedUpdate
+        RotatePlayer(moveValue.x);
     }
 
+    // Keep Z position locked to 0
     void Update()
     {
-      
+        // Ensures that the Z position is locked to 0, without overriding physics-based movements
+        Vector3 position = transform.position;
+        position.z = 0f; // Lock Z-axis position to 0
+        transform.position = position; // Apply position correction
     }
 
+    // Rotate player based on movement direction (left or right)
     void RotatePlayer(float directionX)
     {
         if (directionX > 0)
@@ -73,10 +68,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // Collision-based respawn
+    // Handle collision-based respawn or state update when landing on platform
     void OnCollisionEnter(Collision collision)
     {
-
         if (collision.gameObject.CompareTag("Platform"))
         {
             jumpCount = 0; // Reset jump count on landing
@@ -87,6 +81,4 @@ public class PlayerMovement : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
     }
-
-
 }

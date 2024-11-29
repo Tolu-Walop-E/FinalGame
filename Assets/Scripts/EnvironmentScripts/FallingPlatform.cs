@@ -34,12 +34,10 @@ public class FallingPlatform : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         // Check if the plank hits the player
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Platform") || collision.gameObject.CompareTag("Ground"))
         {
-
-
-                Destroy(gameObject);
-            
+            Destroy(gameObject);
         }
+
     }
 }
