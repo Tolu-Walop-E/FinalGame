@@ -9,25 +9,22 @@ public class MovingPlatform : MonoBehaviour
     private bool movingRight = true;
     private Vector3 startPosition;
 
-    void Start()
+    private void Start()
     {
-
         startPosition = transform.position;
     }
 
-    void Update()
+    private void Update()
     {
         MoveCube();
     }
 
-    void MoveCube()
+    private void MoveCube()
     {
-
+        // Move the platform left or right
         if (movingRight)
         {
             transform.Translate(Vector3.right * rightSpeed * Time.deltaTime);
-
-
             if (transform.position.x >= startPosition.x + distance)
             {
                 movingRight = false;
@@ -36,12 +33,12 @@ public class MovingPlatform : MonoBehaviour
         else
         {
             transform.Translate(Vector3.left * leftSpeed * Time.deltaTime);
-
-
             if (transform.position.x <= startPosition.x - distance)
             {
                 movingRight = true;
             }
         }
     }
+
+    
 }
