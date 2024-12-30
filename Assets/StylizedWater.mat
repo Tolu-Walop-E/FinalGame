@@ -105,9 +105,9 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _FoamAmount: 20
+    - _FoamAmount: 0
     - _FoamCutoff: 1
-    - _FoamScale: 50
+    - _FoamScale: 40
     - _FoamSpeed: 0.4
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -119,8 +119,8 @@ Material:
     - _QueueControl: -1
     - _QueueOffset: 0
     - _RefractionStrength: 80
-    - _Refraction_Scale: 1
-    - _Refraction_Speed: 1
+    - _Refraction_Scale: 5
+    - _Refraction_Speed: 50
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
