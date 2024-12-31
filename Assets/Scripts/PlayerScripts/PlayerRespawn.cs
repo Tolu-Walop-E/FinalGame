@@ -6,7 +6,6 @@ public class PlayerRespawn : MonoBehaviour
     private Vector3 lastCheckpoint; // Player's last checkpoint
     private bool hasCheckpoint = false; // Track if a checkpoint has been reached
 
-    public DoorAndWaterHandler doorAndWaterHandler; // Reference to DoorAndWaterHandler
 
     private void Start()
     {
