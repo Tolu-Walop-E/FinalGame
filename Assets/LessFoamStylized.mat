@@ -33,7 +33,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: StylizedWater
+  m_Name: LessFoamStylized
   m_Shader: {fileID: -6465566751694194690, guid: f01436d95a0996043986723cc207578c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -105,7 +105,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _FoamAmount: 20
+    - _FoamAmount: 0
     - _FoamCutoff: 1
     - _FoamScale: 40
     - _FoamSpeed: 0.4
