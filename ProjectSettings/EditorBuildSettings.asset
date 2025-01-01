@@ -5,9 +5,24 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/LevelScenes/Main-Menu.unity
+    guid: df8be05e7e147ef4b9d150a31eda7320
+  - enabled: 1
+    path: Assets/Scenes/LevelScenes/Level-Select.unity
+    guid: 4bfd7539883250945b41567ee950961e
+  - enabled: 1
+    path: Assets/Scenes/LevelScenes/Settings.unity
+    guid: e33ba26642ad3864a9ef1e6b6ff073a9
+  - enabled: 1
+    path: Assets/Scenes/LevelScenes/Level-1-Forest.unity
+    guid: 56f688b8172c5484280f6ebef36fa3de
+  - enabled: 1
+    path: Assets/Scenes/LevelScenes/Level-2-Sandstorm.unity
+    guid: 5d5814c818d57ba4d819ea3811f554e0
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 6f62247ccbb373f46b77a9946114c60d, type: 2}
   m_UseUCBPForAssetBundles: 0

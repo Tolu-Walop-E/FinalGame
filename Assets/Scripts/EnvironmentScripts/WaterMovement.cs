@@ -1,49 +1,25 @@
 using UnityEngine;
 
-public class WaterMovement : MonoBehaviour
+public class WaterWaveMotion : MonoBehaviour
 {
-    // Wave parameters
-    public float waveSpeed = 1f;
-    public float waveHeight = 0.5f;
-    public float waveFrequency = 1f;
+    public float waveSpeed = 1.0f; // Speed of the wave movement
+    public float waveAmplitude = 0.5f; // Height of the waves
+    public float waveFrequency = 1.0f; // Frequency of the waves (how close waves are)
+    public Vector3 waveDirection = new Vector3(1, 0, 1); // Direction of wave propagation
 
-    // Splash effect prefab
-    public GameObject splashPrefab;
+    private Vector3 initialPosition; // Store the initial position of the cube
 
-    // Update is called once per frame
+    void Start()
+    {
+        initialPosition = transform.position; // Record the starting position
+    }
+
     void Update()
     {
-        AnimateWater();
-    }
+        // Calculate wave offset using a sine wave
+        float waveOffset = Mathf.Sin(Time.time * waveFrequency + Vector3.Dot(transform.position, waveDirection) * waveSpeed) * waveAmplitude;
 
-    void AnimateWater()
-    {
-        // Get the mesh of the water
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
-        if (meshFilter == null) return;
-
-        Mesh mesh = meshFilter.mesh;
-        Vector3[] vertices = mesh.vertices;
-
-        // Apply sine wave movement to vertices
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            Vector3 worldPos = transform.TransformPoint(vertices[i]);
-            vertices[i].y = Mathf.Sin(worldPos.x * waveFrequency + Time.time * waveSpeed) * waveHeight;
-        }
-
-        mesh.vertices = vertices;
-        mesh.RecalculateNormals(); // Optional, improves visual quality
-        meshFilter.mesh = mesh;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        // Trigger splash effect
-        if (splashPrefab != null)
-        {
-            Vector3 splashPosition = new Vector3(other.transform.position.x, transform.position.y, transform.position.z);
-            Instantiate(splashPrefab, splashPosition, Quaternion.identity);
-        }
+        // Apply the wave offset to the cube's Y position
+        transform.position = new Vector3(initialPosition.x, initialPosition.y + waveOffset, initialPosition.z);
     }
 }

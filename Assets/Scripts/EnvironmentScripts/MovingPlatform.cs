@@ -11,12 +11,12 @@ public class MovingPlatform : MonoBehaviour
 
     private void Start()
     {
-        startPosition = transform.position;
+        startPosition = transform.position; // Record the starting position
     }
 
     private void Update()
     {
-        MoveCube();
+        MoveCube(); // Handle the movement of the platform
     }
 
     private void MoveCube()
@@ -27,7 +27,7 @@ public class MovingPlatform : MonoBehaviour
             transform.Translate(Vector3.right * rightSpeed * Time.deltaTime);
             if (transform.position.x >= startPosition.x + distance)
             {
-                movingRight = false;
+                movingRight = false; // Reverse direction when reaching the right limit
             }
         }
         else
@@ -35,10 +35,26 @@ public class MovingPlatform : MonoBehaviour
             transform.Translate(Vector3.left * leftSpeed * Time.deltaTime);
             if (transform.position.x <= startPosition.x - distance)
             {
-                movingRight = true;
+                movingRight = true; // Reverse direction when reaching the left limit
             }
         }
     }
 
-    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player")) // Check if the colliding object is the Player
+        {
+            Debug.Log("Player entered platform."); // Debugging log
+            other.transform.SetParent(this.transform); // Parent the player to the platform
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player")) // Check if the exiting object is the Player
+        {
+            Debug.Log("Player exited platform."); // Debugging log
+            other.transform.SetParent(null); // Unparent the player from the platform
+        }
+    }
 }
