@@ -7,11 +7,12 @@ TagManager:
   - Platform
   - Checkpoint
   - Trap
+  - Wall
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Climbable
   - Water
   - UI
   - 
