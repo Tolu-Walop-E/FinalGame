@@ -8,6 +8,8 @@ TagManager:
   - Checkpoint
   - Trap
   - Wall
+  - Ladder
+  - IcePlatform
   layers:
   - Default
   - TransparentFX

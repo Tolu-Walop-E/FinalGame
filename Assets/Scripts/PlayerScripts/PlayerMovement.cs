@@ -21,6 +21,11 @@ public class PlayerMovement : MonoBehaviour
     public float wallJumpYForce = 7f; // Force applied on the Y-axis during a wall jump
     public LayerMask climbableLayer; // LayerMask for climbable platforms
 
+    // Ladder Climbing Variables
+    public float climbSpeed = 5f; // Speed of climbing
+    private bool isClimbing = false; // Is the player currently climbing
+    private bool isOnLadder = false; // Is the player on a ladder
+
     void Start()
     {
         jumpCount = 0;
@@ -39,6 +44,11 @@ public class PlayerMovement : MonoBehaviour
         {
             PerformWallJump();
         }
+        else if (isClimbing)
+        {
+            // Climbing does not use jumps
+            return;
+        }
         else if (jumpCount < maxJumps)
         {
             rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
@@ -48,12 +58,19 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Regular movement on ground
-        Vector3 movement = new Vector3(moveValue.x * speed, rb.velocity.y, 0f);
-        rb.velocity = movement;
+        if (isClimbing)
+        {
+            HandleClimbing();
+        }
+        else
+        {
+            // Regular movement on ground
+            Vector3 movement = new Vector3(moveValue.x * speed, rb.velocity.y, 0f);
+            rb.velocity = movement;
 
-        RotatePlayer(moveValue.x);
-        HandleWallSlide();
+            RotatePlayer(moveValue.x);
+            HandleWallSlide();
+        }
     }
 
     void Update()
@@ -72,6 +89,48 @@ public class PlayerMovement : MonoBehaviour
         else if (directionX < 0)
         {
             transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            isOnLadder = true;
+            rb.useGravity = false; // Disable gravity when entering the ladder
+            rb.velocity = Vector3.zero; // Reset velocity for smoother climbing
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Ladder"))
+        {
+            isOnLadder = false;
+            isClimbing = false;
+            rb.useGravity = true; // Re-enable gravity when leaving the ladder
+        }
+    }
+
+    private void HandleClimbing()
+    {
+        float verticalInput = moveValue.y;
+
+        // Move vertically based on input
+        Vector3 climbingVelocity = new Vector3(0, verticalInput * climbSpeed, 0);
+        rb.velocity = climbingVelocity;
+
+        // Ensure player doesn't fall while climbing
+        rb.useGravity = false;
+
+        if (Mathf.Abs(verticalInput) > 0.1f)
+        {
+            isClimbing = true;
+        }
+        else
+        {
+            isClimbing = false;
+            rb.velocity = Vector3.zero; // Stop movement when no input
         }
     }
 
