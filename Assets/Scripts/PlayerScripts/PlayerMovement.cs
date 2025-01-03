@@ -11,7 +11,16 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private Collider playerCollider;
 
-    // Start is called before the first frame update
+    // Wall Sliding Variables
+    public float wallSlideSpeed = 2f; // Speed of sliding down the wall
+    private bool isTouchingWall = false; // Check if the player is touching a wall
+    private bool isWallSliding = false;
+
+    // Wall Jump Variables
+    public float wallJumpXForce = 5f; // Force applied on the X-axis during a wall jump
+    public float wallJumpYForce = 7f; // Force applied on the Y-axis during a wall jump
+    public LayerMask climbableLayer; // LayerMask for climbable platforms
+
     void Start()
     {
         jumpCount = 0;
@@ -19,66 +28,108 @@ public class PlayerMovement : MonoBehaviour
         playerCollider = GetComponent<Collider>();
     }
 
-    // Handle movement input
     public void OnMove(InputValue value)
     {
         moveValue = value.Get<Vector2>();
     }
 
-    // Handle jump input
     public void OnJump(InputValue value)
     {
-        if (jumpCount < maxJumps)
+        if (isWallSliding)
+        {
+            PerformWallJump();
+        }
+        else if (jumpCount < maxJumps)
         {
             rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
             jumpCount++;
         }
     }
 
-    // FixedUpdate is used for physics-based movement
     void FixedUpdate()
     {
-        // Restrict movement to X-axis only (Z will stay at 0)
-        Vector3 movement = new Vector3(moveValue.x * speed, rb.velocity.y, 0f);  // Zero out Z-axis
-        rb.velocity = movement; // Apply movement to Rigidbody velocity
+        // Regular movement on ground
+        Vector3 movement = new Vector3(moveValue.x * speed, rb.velocity.y, 0f);
+        rb.velocity = movement;
 
-        // Ensure rotation happens in FixedUpdate
         RotatePlayer(moveValue.x);
+        HandleWallSlide();
     }
 
-    // Keep Z position locked to 0
     void Update()
     {
-        // Ensures that the Z position is locked to 0, without overriding physics-based movements
         Vector3 position = transform.position;
-        position.z = 0f; // Lock Z-axis position to 0
-        transform.position = position; // Apply position correction
+        position.z = 0f;
+        transform.position = position;
     }
 
-    // Rotate player based on movement direction (left or right)
     void RotatePlayer(float directionX)
     {
         if (directionX > 0)
         {
-            transform.rotation = Quaternion.Euler(0f, 0f, 0f);  // Face right
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         }
         else if (directionX < 0)
         {
-            transform.rotation = Quaternion.Euler(0f, 180f, 0f);  // Face left
+            transform.rotation = Quaternion.Euler(0f, 180f, 0f);
         }
     }
 
-    // Handle collision-based respawn or state update when landing on platform
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Platform"))
         {
             jumpCount = 0; // Reset jump count on landing
+
+            // Check if the platform is climbable
+            if (IsClimbable(collision.gameObject))
+            {
+                isTouchingWall = true;
+                Debug.Log("Touching climbable wall.");
+            }
         }
     }
 
-    // Trigger-based respawn (if Respawn is a trigger)
-    void OnTriggerEnter(Collider other)
+    void OnCollisionExit(Collision collision)
     {
+        if (collision.gameObject.CompareTag("Platform") && IsClimbable(collision.gameObject))
+        {
+            isTouchingWall = false;
+            isWallSliding = false;
+            Debug.Log("Left climbable wall.");
+        }
+    }
+
+    private void HandleWallSlide()
+    {
+        if (isTouchingWall && rb.velocity.y < 0)
+        {
+            isWallSliding = true;
+            rb.velocity = new Vector3(rb.velocity.x, -wallSlideSpeed, rb.velocity.z);
+            Debug.Log("Wall sliding...");
+        }
+        else
+        {
+            isWallSliding = false;
+        }
+    }
+
+    private void PerformWallJump()
+    {
+        if (isWallSliding)
+        {
+            Debug.Log("Performing wall jump...");
+            // Jump off the wall in the opposite direction
+            float jumpDirection = transform.rotation.eulerAngles.y == 0 ? -1 : 1; // Determine direction based on player facing
+            rb.velocity = new Vector3(wallJumpXForce * jumpDirection, wallJumpYForce, 0f);
+            isWallSliding = false;
+            jumpCount = 1; // Use one jump after wall jump
+        }
+    }
+
+    private bool IsClimbable(GameObject platform)
+    {
+        // Check if the platform is in the Climbable layer
+        return ((1 << platform.layer) & climbableLayer) != 0;
     }
 }
