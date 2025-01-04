@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerRespawn : MonoBehaviour
 {
+    Animator animator;
     public Transform[] checkpoints; // Array of checkpoints
     private Vector3 lastCheckpoint; // Player's last checkpoint
     private bool hasCheckpoint = false; // Track if a checkpoint has been reached
@@ -9,6 +10,7 @@ public class PlayerRespawn : MonoBehaviour
 
     private void Start()
     {
+        animator = GetComponent<Animator>();
         // Initialize the first checkpoint as the default if available
         if (checkpoints != null && checkpoints.Length > 0)
         {
@@ -39,9 +41,20 @@ public class PlayerRespawn : MonoBehaviour
 
     public void Respawn()
     {
+        // Move the player to the last checkpoint
+        //reset all animations
+        if (animator.GetBool("animateFalling"))
+        {
+            animator.SetBool("animateClimbing", false);
+            animator.ResetTrigger("animateJumping");
+            animator.ResetTrigger("animateDoubleJumping");
+            animator.SetBool("animateFalling", false);
+            animator.SetTrigger("animateLanding");
+        }
+
         if (hasCheckpoint)
         {
-            // Move the player to the last checkpoint
+
             transform.position = lastCheckpoint;
             Debug.Log("Player respawned at checkpoint: " + lastCheckpoint);
         }
