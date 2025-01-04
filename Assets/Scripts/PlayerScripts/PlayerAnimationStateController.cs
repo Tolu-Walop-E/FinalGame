@@ -15,7 +15,7 @@ public class PlayerAnimationStateController : MonoBehaviour
     }
     void checkGrounded()
     {
-        Debug.Log("Checking Grounded");
+        
         grounded = true;
     }
 
