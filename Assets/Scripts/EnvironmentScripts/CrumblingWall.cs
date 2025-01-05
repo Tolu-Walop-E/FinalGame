@@ -7,18 +7,38 @@ public class CrumblingWall : MonoBehaviour
     public Vector3 cubeScale = new Vector3(0.5f, 0.5f, 0.5f); // Size of the broken cubes
     public float explosionForce = 500f; // Explosion force to apply on the broken cubes
     public float destroyDelay = 5f;     // Delay time before destroying the cubes
+    private GameAudioManager audioManager;
+
+    private void Awake()
+    {
+        GameObject audioManagerObject = GameObject.FindGameObjectWithTag("Audio");
+        if (audioManagerObject != null)
+        {
+            audioManager = audioManagerObject.GetComponent<GameAudioManager>();
+        }
+        else
+        {
+            Debug.LogError("AudioManager not found! Ensure there is a GameObject with the tag 'Audio' and it has a GameAudioManager component.");
+        }
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
         // Check if the player collided with the wall
         if (collision.gameObject.CompareTag("Player"))
         {
-            BreakWall();
+            BreakWall(collision.gameObject);
         }
     }
 
-    private void BreakWall()
+    private void BreakWall(GameObject player)
     {
+        // Play the breaking sound effect
+        if (audioManager != null)
+        {
+            audioManager.PlaySFX(audioManager.breakIce);
+        }
+
         // Get the current position and size of the wall
         Vector3 wallPosition = transform.position;
         Vector3 wallSize = transform.localScale;
@@ -42,27 +62,29 @@ public class CrumblingWall : MonoBehaviour
             // Scale the cube
             brokenCube.transform.localScale = cubeScale;
 
-            // Ensure the cube is non-collidable initially, if needed
-            Collider collider = brokenCube.GetComponent<Collider>();
-            if (collider != null)
-            {
-                collider.enabled = false; // Disable the collider for now
-            }
-
             // Add Rigidbody if not already added to the prefab
             Rigidbody rb = brokenCube.GetComponent<Rigidbody>();
             if (rb == null)
             {
-                rb = brokenCube.AddComponent<Rigidbody>(); // Add a Rigidbody component if it's missing
+                rb = brokenCube.AddComponent<Rigidbody>();
+            }
+
+            // Ignore collision with the player
+            Collider cubeCollider = brokenCube.GetComponent<Collider>();
+            Collider playerCollider = player.GetComponent<Collider>();
+            if (cubeCollider != null && playerCollider != null)
+            {
+                Physics.IgnoreCollision(cubeCollider, playerCollider, true);
             }
 
             // Apply explosion force to the cube to simulate explosion
-            rb.AddExplosionForce(explosionForce, wallPosition, 5f); // Adjust radius as needed
+            float explosionRadius = Mathf.Max(wallSize.x, wallSize.y, wallSize.z);
+            rb.AddExplosionForce(explosionForce, wallPosition, explosionRadius);
 
             // Optionally add some rotation to simulate random rotation of the broken pieces
             brokenCube.transform.Rotate(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360));
 
-            // Destroy the cube after 5 seconds
+            // Destroy the cube after the specified delay
             Destroy(brokenCube, destroyDelay);
         }
     }

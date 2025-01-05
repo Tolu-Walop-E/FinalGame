@@ -14,6 +14,10 @@ public class GameAudioManager : MonoBehaviour
     public AudioClip coin;
     public AudioClip walkingSound;
     public AudioClip jumpingSound;
+    public AudioClip iceSpeedIncrease;
+    public AudioClip breakIce;
+
+
 
     [Range(0f, 1f)] public float musicVolume = 1f;
     [Range(0f, 1f)] public float sfxVolume = 1f;
