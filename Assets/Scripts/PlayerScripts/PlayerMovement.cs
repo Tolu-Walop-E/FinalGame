@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     public float iceSpeedMultiplier = 1.5f; // Speed boost on ice
     public float iceFriction = 0.98f; // Friction for sliding on ice
     public float stopThreshold = 0.1f; // Threshold to stop sliding completely
-
+    private bool isOnPlatform = false; // Check if player is on a platform
     // Wall Sliding Variables
     public float wallSlideSpeed = 2f; // Speed of sliding down the wall
     private bool isTouchingWall = false; // Check if the player is touching a wall
@@ -41,8 +41,8 @@ public class PlayerMovement : MonoBehaviour
     private float fallStartHeight; // Height from where the fall starts
     private bool isFalling = false; // Is the player currently falling?
     public float fallDamageThreshold = 10f; // Height difference to trigger fall damage
-    
-    
+
+
     //for checking if player is on the ground
     public LayerMask groundLayer;
     public float raycastDistance = 0.1f;
@@ -85,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
             isRunning = animator.GetBool("isRunning");
 
             Debug.Log($"isWalking: {isWalking}, isRunning: {isRunning}");
-            
+
         }
     }
 
@@ -93,11 +93,11 @@ public class PlayerMovement : MonoBehaviour
     {
         moveValue = value.Get<Vector2>();
 
-        if (moveValue.x != 0)
+        // Only play walking sound if we're moving AND on a platform
+        if (Mathf.Abs(moveValue.x) > 0 && isOnPlatform)
         {
             if (audioManager != null && walkingSound != null)
             {
-                
                 audioManager.PlaySFXLoop(walkingSound);
             }
         }
@@ -113,6 +113,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
+        audioManager.PlaySFX(audioManager.jumpingSound);
         if (isWallSliding)
         {
             PerformWallJump();
@@ -124,6 +125,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (jumpCount < maxJumps)
         {
+            
 
             if (isFalling)
             {
@@ -328,8 +330,10 @@ public class PlayerMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Platform"))
         {
 
+
             jumpCount = 0; // Reset jump count on landing
-            
+            isOnPlatform = true;
+
             // Check for fall damage
             if (isFalling)
             {
@@ -373,8 +377,14 @@ public class PlayerMovement : MonoBehaviour
 
     void OnCollisionExit(Collision collision)
     {
+
+        if (collision.gameObject.CompareTag("Platform"))
+        {
+            isOnPlatform = false;
+        }
         if (collision.gameObject.CompareTag("Platform") && IsClimbable(collision.gameObject))
         {
+            
             isTouchingWall = false;
             isWallSliding = false;
             animator.SetBool("animateClimbing", false); 

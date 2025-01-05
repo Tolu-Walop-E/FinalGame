@@ -1,23 +1,41 @@
 using UnityEngine;
+using UnityEngine.UI; // Import UI namespace
 
 public class GameAudioManager : MonoBehaviour
 {
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource SFXSource;
+    [SerializeField] private Slider musicSlider; // Reference to music slider
+    [SerializeField] private Slider sfxSlider;   // Reference to SFX slider
 
     public AudioClip background;
     public AudioClip death;
     public AudioClip checkpoint;
     public AudioClip coin;
     public AudioClip walkingSound;
+    public AudioClip jumpingSound;
 
-    [Range(0f, 1f)] public float musicVolume = 1f; // Slider for music volume
-    [Range(0f, 1f)] public float sfxVolume = 1f;  // Slider for SFX volume
+    [Range(0f, 1f)] public float musicVolume = 1f;
+    [Range(0f, 1f)] public float sfxVolume = 1f;
 
-    private float currentPitch = 1f; // Default pitch
+    private float currentPitch = 1f;
 
     void Start()
     {
+        // Initialize sliders
+        if (musicSlider != null)
+        {
+            musicSlider.value = musicVolume;
+            musicSlider.onValueChanged.AddListener(SetMusicVolume); // Link slider to method
+        }
+
+        if (sfxSlider != null)
+        {
+            sfxSlider.value = sfxVolume;
+            sfxSlider.onValueChanged.AddListener(SetSFXVolume); // Link slider to method
+        }
+
+        // Start background music
         if (background != null)
         {
             musicSource.clip = background;
@@ -27,9 +45,27 @@ public class GameAudioManager : MonoBehaviour
         UpdateVolume();
     }
 
+    public void SetMusicVolume(float volume)
+    {
+        musicVolume = Mathf.Clamp01(volume); // Ensure volume stays between 0 and 1
+        if (musicSource != null)
+        {
+            musicSource.volume = musicVolume;
+        }
+    }
+
+    public void SetSFXVolume(float volume)
+    {
+        sfxVolume = Mathf.Clamp01(volume); // Ensure volume stays between 0 and 1
+        if (SFXSource != null)
+        {
+            SFXSource.volume = sfxVolume;
+        }
+    }
+
     public void PlaySFX(AudioClip clip)
     {
-        SFXSource.pitch = currentPitch; // Ensure pitch is set
+        SFXSource.pitch = currentPitch;
         SFXSource.PlayOneShot(clip, sfxVolume);
     }
 
@@ -46,7 +82,7 @@ public class GameAudioManager : MonoBehaviour
             SFXSource.loop = true;
             SFXSource.Play();
         }
-        SFXSource.pitch = currentPitch; // Set pitch for looped audio
+        SFXSource.pitch = currentPitch;
     }
 
     public void StopSFX()
@@ -60,10 +96,10 @@ public class GameAudioManager : MonoBehaviour
 
     public void SetSFXSpeed(float speed)
     {
-        currentPitch = speed; // Store current pitch
+        currentPitch = speed;
         if (SFXSource.isPlaying)
         {
-            SFXSource.pitch = currentPitch; // Update pitch if audio is playing
+            SFXSource.pitch = currentPitch;
         }
     }
 
@@ -78,7 +114,6 @@ public class GameAudioManager : MonoBehaviour
         {
             musicSource.volume = musicVolume;
         }
-
         if (SFXSource != null)
         {
             SFXSource.volume = sfxVolume;
