@@ -14,6 +14,8 @@ public class GameAudioManager : MonoBehaviour
     [Range(0f, 1f)] public float musicVolume = 1f; // Slider for music volume
     [Range(0f, 1f)] public float sfxVolume = 1f;  // Slider for SFX volume
 
+    private float currentPitch = 1f; // Default pitch
+
     void Start()
     {
         if (background != null)
@@ -27,6 +29,7 @@ public class GameAudioManager : MonoBehaviour
 
     public void PlaySFX(AudioClip clip)
     {
+        SFXSource.pitch = currentPitch; // Ensure pitch is set
         SFXSource.PlayOneShot(clip, sfxVolume);
     }
 
@@ -43,6 +46,7 @@ public class GameAudioManager : MonoBehaviour
             SFXSource.loop = true;
             SFXSource.Play();
         }
+        SFXSource.pitch = currentPitch; // Set pitch for looped audio
     }
 
     public void StopSFX()
@@ -56,9 +60,10 @@ public class GameAudioManager : MonoBehaviour
 
     public void SetSFXSpeed(float speed)
     {
-        if (SFXSource != null)
+        currentPitch = speed; // Store current pitch
+        if (SFXSource.isPlaying)
         {
-            SFXSource.pitch = speed;
+            SFXSource.pitch = currentPitch; // Update pitch if audio is playing
         }
     }
 

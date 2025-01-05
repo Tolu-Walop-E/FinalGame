@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour
     public int jumpCount;
     private Rigidbody rb;
     private Collider playerCollider;
-    public float speed;
     public float runningSpeed;
     private bool onIcePlatform = false;
     public float iceSpeedMultiplier = 1.5f; // Speed boost on ice
@@ -24,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     public float wallSlideSpeed = 2f; // Speed of sliding down the wall
     private bool isTouchingWall = false; // Check if the player is touching a wall
     private bool isWallSliding = false;
-    private Animator animator;
+
     // Wall Jump Variables
     public float wallJumpXForce = 5f; // Force applied on the X-axis during a wall jump
     public float wallJumpYForce = 7f; // Force applied on the Y-axis during a wall jump
@@ -61,7 +60,6 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
         currentHealth = maxHealth;
-        animator = GetComponent<Animator>();
 
         respawnManager = GetComponent<PlayerRespawn>();
         if (respawnManager == null)
@@ -87,21 +85,7 @@ public class PlayerMovement : MonoBehaviour
             isRunning = animator.GetBool("isRunning");
 
             Debug.Log($"isWalking: {isWalking}, isRunning: {isRunning}");
-            HandleSFXSpeed();
-        }
-    }
-    private void HandleSFXSpeed()
-    {
-        if (audioManager != null)
-        {
-            if (isWalking && !isRunning)
-            {
-                audioManager.SetSFXSpeed(walkingSFXSpeed);
-            }
-            else if (isRunning)
-            {
-                audioManager.SetSFXSpeed(runningSFXSpeed);
-            }
+            
         }
     }
 
@@ -113,7 +97,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (audioManager != null && walkingSound != null)
             {
-                HandleSFXSpeed();
+                
                 audioManager.PlaySFXLoop(walkingSound);
             }
         }
@@ -172,18 +156,23 @@ public class PlayerMovement : MonoBehaviour
                 // Running movement on ground
                 Vector3 movement = new Vector3(moveValue.x * runningSpeed, rb.velocity.y, 0f);
                 rb.velocity = movement;
+                audioManager.SetSFXSpeed(runningSFXSpeed);
+
             }
             else
             {
                 // Regular movement on ground
                 Vector3 movement = new Vector3(moveValue.x * speed, rb.velocity.y, 0f);
                 rb.velocity = movement;
+                audioManager.SetSFXSpeed(walkingSFXSpeed);
+
             }
 
 
             RotatePlayer(moveValue.x);
             HandleWallSlide();
             UpdateMovementStates();
+            
         }
     }
 
@@ -455,6 +444,8 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
+
 
     private void PerformWallJump()
     {
