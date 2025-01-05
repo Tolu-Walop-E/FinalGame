@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class CoinAnimationAndAudio : MonoBehaviour
 {
-    [SerializeField] private float spinSpeed = 100f; // Speed of coin spin
-    [SerializeField] private float bounceHeight = 0.5f; // Height of the bounce
-    [SerializeField] private float bounceSpeed = 2f; // Speed of the bounce
-    [SerializeField] private AudioClip collectSound; // Sound to play when the coin is collected
+    [SerializeField] private float spinSpeed = 100f;
+    [SerializeField] private float bounceHeight = 0.5f;
+    [SerializeField] private float bounceSpeed = 2f;
+    [SerializeField] private AudioClip collectSound;
+    [SerializeField] private int value = 1;
 
-    private Vector3 startPosition; // Original position of the coin
-    private GameAudioManager audioManager; // Reference to the audio manager
+
+    private Vector3 startPosition;
+    private GameAudioManager audioManager;
 
     void Start()
     {
-        // Store the original position of the coin
         startPosition = transform.position;
 
-        // Get reference to the AudioManager
         GameObject audioManagerObject = GameObject.FindGameObjectWithTag("Audio");
         if (audioManagerObject != null)
         {
@@ -23,33 +23,38 @@ public class CoinAnimationAndAudio : MonoBehaviour
         }
         else
         {
-            Debug.LogError("AudioManager not found! Ensure an object with the 'AudioManager' tag exists.");
+            Debug.LogError("AudioManager not found! Ensure an object with the 'Audio' tag exists.");
         }
     }
 
     void Update()
     {
-        // Spin the coin
         transform.Rotate(Vector3.up, spinSpeed * Time.deltaTime, Space.World);
 
-        // Make the coin bounce up and down
         float newY = startPosition.y + Mathf.Sin(Time.time * bounceSpeed) * bounceHeight;
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // Check if the player collects the coin
         if (other.CompareTag("Player"))
         {
-            // Play collect sound
             if (audioManager != null && collectSound != null)
             {
                 audioManager.PlaySFX(collectSound);
             }
 
-            // Destroy the coin
+            if (CoinCounter.Instance != null)
+            {
+                CoinCounter.Instance.IncreaseCoins(value);
+            }
+            }
+            else
+            {
+                Debug.LogError("CoinCounter instance is missing in the scene.");
+            }
+
             Destroy(gameObject);
         }
     }
-}
+
