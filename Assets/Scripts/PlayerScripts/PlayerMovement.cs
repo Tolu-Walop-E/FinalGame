@@ -6,11 +6,13 @@ public class PlayerMovement : MonoBehaviour
     Animator animator;
     public Vector2 moveValue;
     public float jumpSpeed = 5f;
+    public float speed;
+    public float walkingSFXSpeed = 0.8f; // SFX speed for walking
+    public float runningSFXSpeed = 1f; // SFX speed for running
     private int maxJumps = 2;
     public int jumpCount;
     private Rigidbody rb;
     private Collider playerCollider;
-    public float speed;
     public float runningSpeed;
     private bool onIcePlatform = false;
     public float iceSpeedMultiplier = 1.5f; // Speed boost on ice
@@ -46,6 +48,11 @@ public class PlayerMovement : MonoBehaviour
     public float raycastDistance = 0.1f;
     private bool isGrounded;
 
+    private bool isWalking = false;
+    private bool isRunning = false;
+
+    private GameAudioManager audioManager;
+    [SerializeField] private AudioClip walkingSound;
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -53,18 +60,56 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
         currentHealth = maxHealth;
+
         respawnManager = GetComponent<PlayerRespawn>();
         if (respawnManager == null)
         {
             Debug.LogError("PlayerRespawn script not found on the player!");
         }
-    }
 
+        GameObject audioManagerObject = GameObject.FindGameObjectWithTag("Audio");
+        if (audioManagerObject != null)
+        {
+            audioManager = audioManagerObject.GetComponent<GameAudioManager>();
+        }
+        else
+        {
+            Debug.LogError("AudioManager not found! Ensure an object with the 'AudioManager' tag exists.");
+        }
+    }
+    private void UpdateMovementStates()
+    {
+        if (animator != null)
+        {
+            isWalking = animator.GetBool("isWalking");
+            isRunning = animator.GetBool("isRunning");
+
+            Debug.Log($"isWalking: {isWalking}, isRunning: {isRunning}");
+            
+        }
+    }
 
     public void OnMove(InputValue value)
     {
         moveValue = value.Get<Vector2>();
+
+        if (moveValue.x != 0)
+        {
+            if (audioManager != null && walkingSound != null)
+            {
+                
+                audioManager.PlaySFXLoop(walkingSound);
+            }
+        }
+        else
+        {
+            if (audioManager != null)
+            {
+                audioManager.StopSFX();
+            }
+        }
     }
+
 
     public void OnJump(InputValue value)
     {
@@ -111,17 +156,23 @@ public class PlayerMovement : MonoBehaviour
                 // Running movement on ground
                 Vector3 movement = new Vector3(moveValue.x * runningSpeed, rb.velocity.y, 0f);
                 rb.velocity = movement;
+                audioManager.SetSFXSpeed(runningSFXSpeed);
+
             }
             else
             {
                 // Regular movement on ground
                 Vector3 movement = new Vector3(moveValue.x * speed, rb.velocity.y, 0f);
                 rb.velocity = movement;
+                audioManager.SetSFXSpeed(walkingSFXSpeed);
+
             }
 
 
             RotatePlayer(moveValue.x);
             HandleWallSlide();
+            UpdateMovementStates();
+            
         }
     }
 
@@ -393,6 +444,8 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
+
 
     private void PerformWallJump()
     {
