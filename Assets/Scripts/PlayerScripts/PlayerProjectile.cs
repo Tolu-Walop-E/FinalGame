@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileBehaviour : MonoBehaviour
+public class PlayerProjectile : MonoBehaviour
 {
     
     //the way projectiles work are that there is always existing a default projectile, that is always hidden
@@ -82,10 +82,10 @@ public class ProjectileBehaviour : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy")) //if the projectile collides with an enemy
         {
-            // EnemyDamage enemyDamage = other.gameObject.GetComponent<EnemyDamage>();
-            // enemyDamage.TakeDamage(damage); //the enemy takes damage
-            // Debug.Log("ENEMY HIT");
-            // Destroy(gameObject); //the projectile is destroyed
+            EnemyDamage enemyDamage = other.gameObject.GetComponent<EnemyDamage>();
+            enemyDamage.TakeDamage(damage); //the enemy takes damage
+            Debug.Log("ENEMY HIT");
+            Destroy(gameObject); //the projectile is destroyed
         }
         else if (!other.gameObject.CompareTag("Player")) //if the projectile collides with anything else
         {
