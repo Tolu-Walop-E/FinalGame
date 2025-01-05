@@ -2,32 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class FinalCheckPoint : MonoBehaviour
 {
     public bool[] levelUnlocked;
     public int levelIndex;
+    public GameObject levelCompleteMenu;
+
     void Start()
     {
         LoadLevelUnlockedState();
+        levelCompleteMenu.SetActive(false);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other) // Unlock the next level and triggers the level end screen when the player reaches the checkpoint
     {
-        if (other.CompareTag("Player"))  // Assuming the player has the "Player" tag
+        if (other.CompareTag("Player")) 
         {
-            unlockLevel();  // Unlock the level when the player reaches the checkpoint
+            unlockLevel();
+            levelCompleteMenu.SetActive(true);  
         }
     }
 
-    void unlockLevel(){
+    void ReturnToLevelSelect() //Returns to the level select menu
+    {
+        SceneManager.LoadScene("Level-Select");
+    }
+
+    void unlockLevel(){ //Unlocks the next level
         if (levelIndex < 5){
             levelUnlocked[levelIndex] = true;
             SaveLevelUnlockedState();
         }
     }
 
-    void SaveLevelUnlockedState()
+    void SaveLevelUnlockedState() //Saves the contents of the unlocked levels array
     {
         // Convert the bool array to a comma-separated string
         string state = string.Join(",", levelUnlocked.Select(b => b.ToString()).ToArray());
@@ -35,7 +45,7 @@ public class FinalCheckPoint : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    void LoadLevelUnlockedState()
+    void LoadLevelUnlockedState() //Loads the contents of the unlocked levels array
     {
         if (PlayerPrefs.HasKey("LevelUnlocked"))
         {
