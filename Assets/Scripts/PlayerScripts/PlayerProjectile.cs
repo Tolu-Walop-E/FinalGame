@@ -52,7 +52,6 @@ public class PlayerProjectile : MonoBehaviour
     void MoveProjectile()
     {
         Debug.Log(initialDirection);
-        //rotate in 180 degrees by y if in negative direction
         // Rotate by 180 degrees in Y if initial direction is negative
         if (initialDirection.z < 0)
         {
