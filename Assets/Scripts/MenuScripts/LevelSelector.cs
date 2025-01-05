@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -8,12 +9,12 @@ public class LevelSelector : MonoBehaviour
 {
     public GameObject LevelSelectMenu;
     public GameObject[] levels;
-    public string[] levelNames = {"Level-1-Forest","Level-2-Sandstorm","Level-3-Oasis","","Level-5-Ice-Level"};
-    public bool[] levelUnlocked = {true,false,false,false,false};
     private Button playButton;
+    public bool[] levelUnlocked;
 
     void Start()
     {
+        LoadLevelUnlockedState();
         foreach (GameObject level in levels)
         {
             level.SetActive(false);
@@ -24,7 +25,36 @@ public class LevelSelector : MonoBehaviour
         {
             levels[0].SetActive(true);
         }
+
+        
     }
+
+    void SaveLevelUnlockedState()
+    {
+        // Convert the bool array to a comma-separated string
+        string state = string.Join(",", levelUnlocked.Select(b => b.ToString()).ToArray());
+        PlayerPrefs.SetString("LevelUnlocked", state);
+        PlayerPrefs.Save();
+    }
+
+    void LoadLevelUnlockedState()
+    {
+        if (PlayerPrefs.HasKey("LevelUnlocked"))
+        {
+            // Get the saved string
+            string state = PlayerPrefs.GetString("LevelUnlocked");
+            
+            // Convert the string back to a bool array
+            levelUnlocked = state.Split(',').Select(s => bool.Parse(s)).ToArray();
+        }
+        else
+        {
+            // Set default value if no saved state exists
+            levelUnlocked = new bool[]{true, false, false, false, false};
+        }
+    }
+
+
 
     private void Awake()
     {
@@ -44,9 +74,20 @@ public class LevelSelector : MonoBehaviour
         }
     }
 
+    public void BackToMainMenu()
+    {
+        SaveLevelUnlockedState();
+        SceneManager.LoadScene("Main-Menu");
+    }
+
     public void PlayLevel(){
+        string[] levelNames = {"Level-1-Forest","Level-2-Sandstorm","Level-3-Oasis","Level-4-Mountains","Level-5-Ice-Level"};
         int currentIndex = GetActivePanelIndex();
+        Debug.Log(currentIndex);
+        Debug.Log(levelNames[currentIndex]);
+        SaveLevelUnlockedState();
         SceneManager.LoadScene(levelNames[currentIndex]);
+
     }
 
     public void NextPanelRight()
@@ -122,5 +163,9 @@ public class LevelSelector : MonoBehaviour
         {
             levelUnlocked[i] = true;
         }
+    }
+
+    public void ResetAll(){
+        levelUnlocked = new bool[]{true, false, false, false, false};
     }
 }

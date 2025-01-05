@@ -23,6 +23,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LevelScenes/Level-2-Sandstorm.unity
     guid: 5d5814c818d57ba4d819ea3811f554e0
+  - enabled: 1
+    path: Assets/Scenes/LevelScenes/Level-3-Oasis.unity
+    guid: 7847617d478ff9d4fabaa57c0eca0159
+  - enabled: 1
+    path: Assets/Scenes/LevelScenes/Level-4-Mountains.unity
+    guid: d1c39bb9d55a453429b955b923db78b7
+  - enabled: 1
+    path: Assets/Scenes/LevelScenes/Level-5-Ice-Level.unity
+    guid: f53e4d08b05fdab45b5b03a825a2390a
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 6f62247ccbb373f46b77a9946114c60d, type: 2}
   m_UseUCBPForAssetBundles: 0
