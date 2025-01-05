@@ -84,10 +84,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (animator != null)
         {
-            isWalking = animator.GetBool("isWalking");
-            isRunning = animator.GetBool("isRunning");
+            isWalking = animator.GetBool("animateWalking");
+            isRunning = animator.GetBool("animateRunning");
 
-            Debug.Log($"isWalking: {isWalking}, isRunning: {isRunning}");
+            // Debug.Log($"isWalking: {isWalking}, isRunning: {isRunning}");
 
         }
     }
@@ -189,10 +189,6 @@ public class PlayerMovement : MonoBehaviour
         if (currentHealth <= 0f)
         {
             respawnManager.Respawn();
-            //reset all animations
-            animator.enabled = false;
-            animator.enabled = true;
-            Debug.Log("Animatons reset");
         }
     }
 
@@ -350,13 +346,7 @@ public class PlayerMovement : MonoBehaviour
                 float fallDistance = fallStartHeight - transform.position.y; // Calculate fall distance
                 if (fallDistance > fallDamageThreshold)
                 {
-                    //reset all animations
-                    animator.SetBool("animateFalling",false);
                     respawnManager.Respawn(); // Respawn if fall damage exceeds threshold
-                    animator.SetBool("animateFalling",false);
-                    animator.enabled = false;
-                    animator.enabled = true;
-                    Debug.Log("Animatons reset");
                 }
                 isFalling = false; // Reset falling state
                 animator.SetBool("animateClimbing", false);
