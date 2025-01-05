@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace EnemyScripts
@@ -8,24 +10,33 @@ namespace EnemyScripts
         public static int noProjectiles = 0; //number of projectiles on map
         private bool isOriginal = true; //whether this projectile is the original projectile
         private Renderer renderer; 
-        public Transform enemy;
+        public Transform player; //so the attack faces towards the player
         private Vector3 initialDirection; //initial direction of the projectile
         public int damage = 10; //damage the projectile can deal
 
         private void Start()
         {
+            Debug.Log("In EnemyProjectile.cs");
             renderer = GetComponent<Renderer>();
             if (noProjectiles == 0) //if there are no projectiles on the screen
             {
+                Debug.Log("There are no projectiles on the screen");
                 isOriginal = true; //then this projectile is the original
-                noProjectiles++; //so, another projectile can be made
+                noProjectiles++; //so, another projectile must be made 
             }
             else
             {
+                Debug.Log("There is at least one projectile on the screen");
                 isOriginal = false; //this projectile is not the original
-                Vector3 enemyForwardDirection = enemy.forward; //the forward direction of the player is determined
-                //the initial direction of the projectile is set as the direction of the player
-                initialDirection = new Vector3(enemyForwardDirection.z, 0, enemyForwardDirection.x).normalized; 
+                Vector3 playerForwardDirection = player.forward; //the forward direction of the player is determined
+                
+                //the initial direction of the projectile is set as the negative direction of the player
+                // initialDirection = new Vector3(playerForwardDirection.z, 0, playerForwardDirection.x).normalized; 
+                // initialDirection = -initialDirection;
+                
+                Vector3 playerToEnemyDirection = (player.position - transform.position).normalized;
+                initialDirection = new Vector3(playerToEnemyDirection.x, 0, 0).normalized;
+                Debug.Log(initialDirection);
             }
         }
 
@@ -37,6 +48,7 @@ namespace EnemyScripts
             }
             if (!isOriginal)
             {
+                Debug.Log("Enemy Projectile is not Original");
                 renderer.enabled = true; //if it's not, its rendered
                 MoveProjectile(); //and moves
             
@@ -45,14 +57,19 @@ namespace EnemyScripts
         
         void MoveProjectile()
         {
-            Debug.Log(initialDirection);
-            //rotate in 180 degrees by y if in negative direction
-            // Rotate by 180 degrees in Y if initial direction is negative
-            if (initialDirection.z < 0)
-            {
-                transform.rotation = Quaternion.Euler(0, 180, 0);
+            Debug.Log("Enemy Projectile will move");
+            // Calculate the movement direction based on the x component of the initial direction
+            float movementDirection = Mathf.Sign(initialDirection.x); // 1 for right, -1 for left
+
+            // Set the rotation based on the movement direction
+            if (movementDirection == -1)
+            { 
+                transform.rotation = Quaternion.Euler(0, 180 * movementDirection, 0);
             }
-            transform.position += initialDirection * speed * Time.deltaTime; //via the initial direction
+
+
+            // Move the projectile in the initial direction
+            transform.position += new Vector3(initialDirection.x, 0, 0) * speed * Time.deltaTime;
         
             // Check if the projectile is out of bounds and destroy clones only
             if (!IsWithinBounds() && !isOriginal) //if the projectile leaves bounds (hits nothing and goes off screen)
@@ -75,10 +92,10 @@ namespace EnemyScripts
         
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.CompareTag("Player")) //if the projectile collides with an player
+            if (other.gameObject.CompareTag("Player")) //if the projectile collides with a player
             {
-                PlayerDamage playerDamage = other.gameObject.GetComponent<PlayerDamage>();
-                playerDamage.TakeDamage(damage); //the enemy takes damage
+                // PlayerDamage playerDamage = other.gameObject.GetComponent<PlayerDamage>();
+                // playerDamage.TakeDamage(damage); //the player takes damage
                 Debug.Log("PLAYER HIT");
                 Destroy(gameObject); //the projectile is destroyed
             }
