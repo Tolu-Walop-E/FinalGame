@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    Animator animator;
     public Vector2 moveValue;
     public float jumpSpeed = 5f;
     public float speed;
@@ -12,7 +13,8 @@ public class PlayerMovement : MonoBehaviour
     public int jumpCount;
     private Rigidbody rb;
     private Collider playerCollider;
-
+    public float speed;
+    public float runningSpeed;
     private bool onIcePlatform = false;
     public float iceSpeedMultiplier = 1.5f; // Speed boost on ice
     public float iceFriction = 0.98f; // Friction for sliding on ice
@@ -40,6 +42,12 @@ public class PlayerMovement : MonoBehaviour
     private float fallStartHeight; // Height from where the fall starts
     private bool isFalling = false; // Is the player currently falling?
     public float fallDamageThreshold = 10f; // Height difference to trigger fall damage
+    
+    
+    //for checking if player is on the ground
+    public LayerMask groundLayer;
+    public float raycastDistance = 0.1f;
+    private bool isGrounded;
 
     private bool isWalking = false;
     private bool isRunning = false;
@@ -48,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioClip walkingSound;
     void Start()
     {
+        animator = GetComponent<Animator>();
         jumpCount = 0;
         rb = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
@@ -131,6 +140,15 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (jumpCount < maxJumps)
         {
+
+            if (isFalling)
+            {
+                animator.SetTrigger("animateDoubleJumping");
+            }
+            else
+            {
+                animator.SetTrigger("animateJumping");
+            }
             rb.AddForce(Vector3.up * jumpSpeed, ForceMode.Impulse);
             jumpCount++;
         }
@@ -138,6 +156,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        bool runPressed = Input.GetKey("left shift");
         if (isClimbing)
         {
             HandleClimbing();
@@ -148,9 +167,19 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            // Regular movement on ground
-            Vector3 movement = new Vector3(moveValue.x * speed, rb.velocity.y, 0f);
-            rb.velocity = movement;
+            if (runPressed)
+            {
+                // Running movement on ground
+                Vector3 movement = new Vector3(moveValue.x * runningSpeed, rb.velocity.y, 0f);
+                rb.velocity = movement;
+            }
+            else
+            {
+                // Regular movement on ground
+                Vector3 movement = new Vector3(moveValue.x * speed, rb.velocity.y, 0f);
+                rb.velocity = movement;
+            }
+
 
             RotatePlayer(moveValue.x);
             HandleWallSlide();
@@ -166,6 +195,10 @@ public class PlayerMovement : MonoBehaviour
         if (currentHealth <= 0f)
         {
             respawnManager.Respawn();
+            //reset all animations
+            animator.enabled = false;
+            animator.enabled = true;
+            Debug.Log("Animatons reset");
         }
     }
 
@@ -179,8 +212,63 @@ public class PlayerMovement : MonoBehaviour
         Vector3 position = transform.position;
         position.z = 0f;
         transform.position = position;
+        CheckGrounded();
+        HandleMovement(isGrounded);
+       
+        
+    }
 
+    void CheckGrounded()
+    {
+        // Cast a ray downwards to check if player is touching the ground
+        RaycastHit hit;
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer);
+    }
 
+    void HandleMovement(bool grounded)
+    {
+        bool animateWalking = animator.GetBool("animateWalking");
+        bool walkPressed = (Input.GetKey("d") || Input.GetKey("a"));
+        
+        bool animateRunning = animator.GetBool("animateRunning");
+        bool runPressed = Input.GetKey("left shift");
+        
+
+        
+        if (!isClimbing && !isOnLadder && !isWallSliding && !isFalling && !isTouchingWall)
+        {
+            if (animator.GetBool("animateFalling"))
+            {
+                animator.SetBool("animateFalling", false);
+            }
+            if (!animateWalking && walkPressed)
+            {
+                animator.SetBool("animateWalking", true);
+                //Debug.Log("animateWalking True");
+                
+            }
+            if (animateWalking && !walkPressed)
+            {
+                animator.SetBool("animateWalking", false);
+                //Debug.Log("animateWalking False");
+                
+            }
+        
+            //walking and not running and presses run btn
+            if (!animateRunning && (walkPressed && runPressed))
+            {
+
+                animator.SetBool("animateRunning", true);
+                //Debug.Log("animateRunning True");
+            }
+        
+            //walking and running and releases run btn or run+walk btn
+            if (animateRunning && (!walkPressed || !runPressed))
+            {
+                animator.SetBool("animateRunning", false);
+                //Debug.Log("animateRunning False");
+            }
+        }
     }
 
 
@@ -200,6 +288,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.CompareTag("Ladder"))
         {
+            animator.SetBool("animateClimbing", true);
             isOnLadder = true;
             rb.useGravity = false; // Disable gravity when entering the ladder
             rb.velocity = Vector3.zero; // Reset velocity for smoother climbing
@@ -210,6 +299,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.CompareTag("Ladder"))
         {
+            animator.SetBool("animateClimbing", false);
             isOnLadder = false;
             isClimbing = false;
             rb.useGravity = true; // Re-enable gravity when leaving the ladder
@@ -231,10 +321,12 @@ public class PlayerMovement : MonoBehaviour
 
             if (Mathf.Abs(verticalInput) > 0.1f)
             {
+                animator.SetBool("animateClimbing", true);
                 isClimbing = true;
             }
             else
             {
+                animator.SetBool("animateClimbing", false);
                 isClimbing = false;
                 rb.velocity = Vector3.zero; // Stop movement when no input
             }
@@ -246,22 +338,39 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Platform"))
         {
-            jumpCount = 0; // Reset jump count on landing
 
+            jumpCount = 0; // Reset jump count on landing
+            
             // Check for fall damage
             if (isFalling)
             {
                 float fallDistance = fallStartHeight - transform.position.y; // Calculate fall distance
                 if (fallDistance > fallDamageThreshold)
                 {
+                    //reset all animations
+                    animator.SetBool("animateFalling",false);
                     respawnManager.Respawn(); // Respawn if fall damage exceeds threshold
+                    animator.SetBool("animateFalling",false);
+                    animator.enabled = false;
+                    animator.enabled = true;
+                    Debug.Log("Animatons reset");
                 }
                 isFalling = false; // Reset falling state
+                animator.SetBool("animateClimbing", false);
+                animator.ResetTrigger("animateJumping");
+                animator.ResetTrigger("animateDoubleJumping");
+                animator.SetBool("animateFalling", false);
+                //land
+                if (!IsClimbable(collision.gameObject))
+                {
+                    animator.SetTrigger("animateLanding");
+                }
             }
 
             // Check if the platform is climbable
             if (IsClimbable(collision.gameObject))
             {
+                animator.SetBool("animateClimbing", true); //replace with wall sliding
                 isTouchingWall = true;
                 Debug.Log("Touching climbable wall.");
             }
@@ -279,6 +388,7 @@ public class PlayerMovement : MonoBehaviour
         {
             isTouchingWall = false;
             isWallSliding = false;
+            animator.SetBool("animateClimbing", false); 
             Debug.Log("Left climbable wall.");
         }
         if (collision.gameObject.layer == LayerMask.NameToLayer("IcePlatforms"))
@@ -291,6 +401,7 @@ public class PlayerMovement : MonoBehaviour
         {
             fallStartHeight = transform.position.y; // Record height at start of fall
             isFalling = true; // Mark as falling
+            animator.SetBool("animateFalling", true); //animateFalling
         }
     }
 
@@ -298,12 +409,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isTouchingWall && rb.velocity.y < 0)
         {
+            animator.SetBool("animateClimbing", true); 
             isWallSliding = true;
             rb.velocity = new Vector3(rb.velocity.x, -wallSlideSpeed, rb.velocity.z);
             Debug.Log("Wall sliding...");
         }
         else
         {
+            animator.SetBool("animateClimbing", false); 
             isWallSliding = false;
         }
     }
@@ -311,12 +424,24 @@ public class PlayerMovement : MonoBehaviour
     private void HandleIceMovement()
     {
         bool isPressingMoveKeys = moveValue.x != 0;
+        bool runPressed = Input.GetKey("left shift");
 
         if (isPressingMoveKeys)
         {
-            // If the player is pressing movement keys, apply regular movement with boosted speed
-            Vector3 movement = new Vector3(moveValue.x * speed * iceSpeedMultiplier, rb.velocity.y, 0f);
-            rb.velocity = movement;
+            if (runPressed)
+            {
+                Debug.Log("runPressed so increased speed");
+                Vector3 movement = new Vector3(moveValue.x * runningSpeed * iceSpeedMultiplier, rb.velocity.y, 0f);
+                rb.velocity = movement;
+            }
+            else
+            {
+                // If the player is pressing movement keys, apply regular movement with boosted speed
+                Vector3 movement = new Vector3(moveValue.x * speed * iceSpeedMultiplier, rb.velocity.y, 0f);
+                rb.velocity = movement;
+            }
+            
+
         }
         else
         {
@@ -335,6 +460,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isWallSliding)
         {
+            animator.SetTrigger("animateJumping");
             Debug.Log("Performing wall jump...");
             // Jump off the wall in the opposite direction
             float jumpDirection = transform.rotation.eulerAngles.y == 0 ? -1 : 1; // Determine direction based on player facing
