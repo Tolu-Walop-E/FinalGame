@@ -44,10 +44,6 @@ public class PlayerRespawn : MonoBehaviour
             hasCheckpoint = true;
             Debug.Log("Checkpoint reached at: " + lastCheckpoint);
 
-            if (audioManager != null)
-            {
-                audioManager.PlaySFX(audioManager.checkpoint); // Play sound for reaching a checkpoint
-            }
         }
         else if (other.CompareTag("Respawn"))
         {
