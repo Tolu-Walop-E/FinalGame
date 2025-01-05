@@ -152,6 +152,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (onIcePlatform)
         {
+            
             HandleIceMovement(); // Handle ice platform movement
         }
         else
@@ -380,6 +381,7 @@ public class PlayerMovement : MonoBehaviour
             if (collision.gameObject.layer == LayerMask.NameToLayer("IcePlatforms"))
             {
                 onIcePlatform = true;
+                audioManager.PlaySFX(audioManager.iceSpeedIncrease);
                 rb.velocity = new Vector3(rb.velocity.x * iceSpeedMultiplier, rb.velocity.y, rb.velocity.z); // Boost initial velocity
             }
         }
