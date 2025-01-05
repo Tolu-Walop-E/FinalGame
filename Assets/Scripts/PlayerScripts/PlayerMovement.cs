@@ -333,10 +333,12 @@ public class PlayerMovement : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        
+        // Prevent rotation in any axis
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        
         if (collision.gameObject.CompareTag("Platform"))
         {
-
-
             jumpCount = 0; // Reset jump count on landing
             isOnPlatform = true;
 
@@ -372,6 +374,13 @@ public class PlayerMovement : MonoBehaviour
                 onIcePlatform = true;
                 rb.velocity = new Vector3(rb.velocity.x * iceSpeedMultiplier, rb.velocity.y, rb.velocity.z); // Boost initial velocity
             }
+        }
+
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            animator.SetTrigger("animateKicking");
+            Destroy(collision.gameObject);
+
         }
     }
 
