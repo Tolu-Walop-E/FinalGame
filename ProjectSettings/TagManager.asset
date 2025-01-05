@@ -8,6 +8,9 @@ TagManager:
   - Checkpoint
   - Trap
   - Wall
+  - Ladder
+  - IcePlatform
+  - Audio
   layers:
   - Default
   - TransparentFX
@@ -15,7 +18,7 @@ TagManager:
   - Climbable
   - Water
   - UI
-  - 
+  - IcePlatforms
   - 
   - 
   - 
