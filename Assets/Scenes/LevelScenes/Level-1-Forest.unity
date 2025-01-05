@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -10084,7 +10084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9ef066958e737a94caea662a12073315, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 26
+      value: 27.22
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9ef066958e737a94caea662a12073315, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10574,12 +10574,16 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6503498114023628838, guid: ba4c281bbee96468ea99a7c957240867, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503498114023628838, guid: ba4c281bbee96468ea99a7c957240867, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.44
       objectReference: {fileID: 0}
     - target: {fileID: 6503498114023628838, guid: ba4c281bbee96468ea99a7c957240867, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.08
+      value: 3.3
       objectReference: {fileID: 0}
     - target: {fileID: 6503498114023628838, guid: ba4c281bbee96468ea99a7c957240867, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13047,6 +13051,8 @@ MonoBehaviour:
   coin: {fileID: 8300000, guid: d857c7e53dfb6064ca0e9c4e35f62e56, type: 3}
   walkingSound: {fileID: 8300000, guid: df7087e4d8a8bb546bc08ce68632903f, type: 3}
   jumpingSound: {fileID: 8300000, guid: 4e349dc959014a845b9aa317d1c2b7f0, type: 3}
+  iceSpeedIncrease: {fileID: 0}
+  breakIce: {fileID: 0}
   musicVolume: 1
   sfxVolume: 1
 --- !u!4 &1491494464
