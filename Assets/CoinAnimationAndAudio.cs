@@ -6,7 +6,7 @@ public class CoinAnimationAndAudio : MonoBehaviour
     [SerializeField] private float bounceHeight = 0.5f; // Height of the bounce
     [SerializeField] private float bounceSpeed = 2f; // Speed of the bounce
     [SerializeField] private AudioClip collectSound; // Sound to play when the coin is collected
-
+    public int value;
     private Vector3 startPosition; // Original position of the coin
     private GameAudioManager audioManager; // Reference to the audio manager
 
@@ -47,6 +47,7 @@ public class CoinAnimationAndAudio : MonoBehaviour
             {
                 audioManager.PlaySFX(collectSound);
             }
+            CoinCounter.instance.IncreaseCoins(value);
 
             // Destroy the coin
             Destroy(gameObject);

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028305, g: 0.22571313, b: 0.3069213, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7585,32 +7585,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1358570499}
   m_SourcePrefab: {fileID: 100100000, guid: 365d9b39ee7deb449b4778109ac92be5, type: 3}
---- !u!1 &137518695 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -3212976540736961966, guid: 5c890244405e4094f9590c288f97da2c, type: 3}
-  m_PrefabInstance: {fileID: 1772038251}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &137518697
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 137518695}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2.0044372, y: 0.49999988, z: 1.8500004}
-  m_Center: {x: -1.1368684e-13, y: 1.3664777, z: 0}
 --- !u!1 &141988892
 GameObject:
   m_ObjectHideFlags: 0
@@ -29073,6 +29047,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3212976540736961966, guid: 5c890244405e4094f9590c288f97da2c, type: 3}
+      propertyPath: m_TagString
+      value: Platform
+      objectReference: {fileID: 0}
+    - target: {fileID: -1696546888734786457, guid: 5c890244405e4094f9590c288f97da2c, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -1696546888734786457, guid: 5c890244405e4094f9590c288f97da2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1696546888734786457, guid: 5c890244405e4094f9590c288f97da2c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.893
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5c890244405e4094f9590c288f97da2c, type: 3}
       propertyPath: m_Name
       value: bridgeBroken (3)
@@ -29466,7 +29456,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 4615926e499be4c73bcc42cca5772f4e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.98
+      value: 6.39
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4615926e499be4c73bcc42cca5772f4e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -38182,12 +38172,10 @@ PrefabInstance:
       value: Platform
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: -3212976540736961966, guid: 5c890244405e4094f9590c288f97da2c, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: -3212976540736961966, guid: 5c890244405e4094f9590c288f97da2c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 137518697}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c890244405e4094f9590c288f97da2c, type: 3}
 --- !u!1 &1781170415 stripped
 GameObject:
@@ -43078,6 +43066,8 @@ MonoBehaviour:
   coin: {fileID: 8300000, guid: d857c7e53dfb6064ca0e9c4e35f62e56, type: 3}
   walkingSound: {fileID: 8300000, guid: df7087e4d8a8bb546bc08ce68632903f, type: 3}
   jumpingSound: {fileID: 8300000, guid: 4e349dc959014a845b9aa317d1c2b7f0, type: 3}
+  iceSpeedIncrease: {fileID: 0}
+  breakIce: {fileID: 0}
   musicVolume: 1
   sfxVolume: 1
 --- !u!4 &2066320301
@@ -43867,8 +43857,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 8.301508, z: 6.42036}
-  m_Center: {x: 0, y: 3.650754, z: 0.21445313}
+  m_Size: {x: 1.7771063, y: 8.301508, z: 6.42036}
+  m_Center: {x: 0.38855314, y: 3.650754, z: 0.21445313}
 --- !u!65 &2104117788
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -43905,12 +43895,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.7771063, y: 8.301508, z: 6.42036}
+  m_Center: {x: 0.38855314, y: 3.650754, z: 0.21445313}
 --- !u!1001 &2106511726
 PrefabInstance:
   m_ObjectHideFlags: 0

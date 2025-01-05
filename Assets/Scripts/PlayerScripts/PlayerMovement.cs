@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isWalking = false;
     private bool isRunning = false;
-    
+
     // Attacks
     public GameObject playerProjectile;
 
@@ -128,7 +128,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (jumpCount < maxJumps)
         {
-            
+
 
             if (isFalling)
             {
@@ -152,7 +152,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (onIcePlatform)
         {
-            
+
             HandleIceMovement(); // Handle ice platform movement
         }
         else
@@ -178,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
             RotatePlayer(moveValue.x);
             HandleWallSlide();
             UpdateMovementStates();
-            
+
         }
     }
 
@@ -198,7 +198,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-   
+
 
 
 
@@ -210,14 +210,14 @@ public class PlayerMovement : MonoBehaviour
         transform.position = position;
         CheckGrounded();
         HandleMovement(isGrounded);
-        
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Instantiate(playerProjectile, (transform.position + heightOffset), Quaternion.identity);
             animator.SetTrigger("animateProjectile");
         }
-       
-        
+
+
     }
 
     void CheckGrounded()
@@ -231,12 +231,12 @@ public class PlayerMovement : MonoBehaviour
     {
         bool animateWalking = animator.GetBool("animateWalking");
         bool walkPressed = (Input.GetKey("d") || Input.GetKey("a"));
-        
+
         bool animateRunning = animator.GetBool("animateRunning");
         bool runPressed = Input.GetKey("left shift");
-        
 
-        
+
+
         if (!isClimbing && !isOnLadder && !isWallSliding && !isFalling && !isTouchingWall)
         {
             if (animator.GetBool("animateFalling"))
@@ -247,15 +247,15 @@ public class PlayerMovement : MonoBehaviour
             {
                 animator.SetBool("animateWalking", true);
                 //Debug.Log("animateWalking True");
-                
+
             }
             if (animateWalking && !walkPressed)
             {
                 animator.SetBool("animateWalking", false);
                 //Debug.Log("animateWalking False");
-                
+
             }
-        
+
             //walking and not running and presses run btn
             if (!animateRunning && (walkPressed && runPressed))
             {
@@ -263,7 +263,7 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetBool("animateRunning", true);
                 //Debug.Log("animateRunning True");
             }
-        
+
             //walking and running and releases run btn or run+walk btn
             if (animateRunning && (!walkPressed || !runPressed))
             {
@@ -352,9 +352,9 @@ public class PlayerMovement : MonoBehaviour
                 if (fallDistance > fallDamageThreshold)
                 {
                     //reset all animations
-                    animator.SetBool("animateFalling",false);
+                    animator.SetBool("animateFalling", false);
                     respawnManager.Respawn(); // Respawn if fall damage exceeds threshold
-                    animator.SetBool("animateFalling",false);
+                    animator.SetBool("animateFalling", false);
                     animator.enabled = false;
                     animator.enabled = true;
                     Debug.Log("Animatons reset");
@@ -396,10 +396,10 @@ public class PlayerMovement : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Platform") && IsClimbable(collision.gameObject))
         {
-            
+
             isTouchingWall = false;
             isWallSliding = false;
-            animator.SetBool("animateClimbing", false); 
+            animator.SetBool("animateClimbing", false);
             Debug.Log("Left climbable wall.");
         }
         if (collision.gameObject.layer == LayerMask.NameToLayer("IcePlatforms"))
@@ -420,14 +420,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isTouchingWall && rb.velocity.y < 0)
         {
-            animator.SetBool("animateClimbing", true); 
+            animator.SetBool("animateClimbing", true);
             isWallSliding = true;
             rb.velocity = new Vector3(rb.velocity.x, -wallSlideSpeed, rb.velocity.z);
             Debug.Log("Wall sliding...");
         }
         else
         {
-            animator.SetBool("animateClimbing", false); 
+            animator.SetBool("animateClimbing", false);
             isWallSliding = false;
         }
     }
@@ -451,7 +451,7 @@ public class PlayerMovement : MonoBehaviour
                 Vector3 movement = new Vector3(moveValue.x * speed * iceSpeedMultiplier, rb.velocity.y, 0f);
                 rb.velocity = movement;
             }
-            
+
 
         }
         else
