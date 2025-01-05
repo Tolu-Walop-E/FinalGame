@@ -50,6 +50,9 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isWalking = false;
     private bool isRunning = false;
+    
+    // Attacks
+    public GameObject playerProjectile;
 
     private GameAudioManager audioManager;
     [SerializeField] private AudioClip walkingSound;
@@ -202,10 +205,17 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         Vector3 position = transform.position;
+        Vector3 heightOffset = new Vector3(0, 1f, 0);
         position.z = 0f;
         transform.position = position;
         CheckGrounded();
         HandleMovement(isGrounded);
+        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Instantiate(playerProjectile, (transform.position + heightOffset), Quaternion.identity);
+            animator.SetTrigger("animateProjectile");
+        }
        
         
     }
