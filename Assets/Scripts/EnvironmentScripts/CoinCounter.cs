@@ -1,29 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
 public class CoinCounter : MonoBehaviour
 {
-    public static CoinCounter instance;
+    public static CoinCounter Instance { get; private set; }
 
-    public TMP_Text coinText;
-    public int currentCoins = 0;
-
+    [SerializeField] private TMP_Text coinText;
+    private int currentCoins = 0;
+    
     private void Awake()
     {
-        instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogError("Multiple CoinCounter instances detected in the scene!");
+            Destroy(gameObject);
+        }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        coinText.text = "Coins: " + currentCoins.ToString();
+        UpdateUI();
     }
 
-    public void IncreaseCoins(int v)
+    public void IncreaseCoins(int value)
     {
-        currentCoins += v;
-        coinText.text = "Coins: " + currentCoins.ToString();
+        currentCoins += value;
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
+        coinText.text = $"Coins: {currentCoins}";
     }
 }

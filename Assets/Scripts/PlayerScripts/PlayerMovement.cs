@@ -1,8 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
+
 
 public class PlayerMovement : MonoBehaviour
 {
+    public Slider healthBar;
     Animator animator;
     public Vector2 moveValue;
     public float jumpSpeed = 5f;
@@ -41,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
     private float fallStartHeight; // Height from where the fall starts
     private bool isFalling = false; // Is the player currently falling?
     public float fallDamageThreshold = 10f; // Height difference to trigger fall damage
-
+    public float damage = 10f; // Damage taken from fall
 
     //for checking if player is on the ground
     public LayerMask groundLayer;
@@ -63,7 +66,8 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         playerCollider = GetComponent<Collider>();
         currentHealth = maxHealth;
-
+        healthBar.maxValue = maxHealth;
+        healthBar.value = currentHealth;
         respawnManager = GetComponent<PlayerRespawn>();
         if (respawnManager == null)
         {
@@ -186,12 +190,17 @@ public class PlayerMovement : MonoBehaviour
     {
         currentHealth -= damage;
         Debug.Log($"Player took {damage} damage. Current health: {currentHealth}");
+        healthBar.value = currentHealth;
 
         if (currentHealth <= 0f)
         {
-            respawnManager.Respawn();
+            Debug.Log("Player has died. Respawning...");
+            respawnManager.Respawn(); // Respawn the player
+            currentHealth = maxHealth; // Reset health
+            healthBar.value = currentHealth; // Update health bar
         }
     }
+
 
 
 
@@ -336,8 +345,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Platform"))
         {
-
-
             jumpCount = 0; // Reset jump count on landing
             isOnPlatform = true;
 
@@ -347,7 +354,10 @@ public class PlayerMovement : MonoBehaviour
                 float fallDistance = fallStartHeight - transform.position.y; // Calculate fall distance
                 if (fallDistance > fallDamageThreshold)
                 {
-                    respawnManager.Respawn(); // Respawn if fall damage exceeds threshold
+                    // Calculate damage proportional to the excess fall distance
+                    float excessFall = fallDistance - fallDamageThreshold;
+                    float damage = excessFall * 5f; // Scale damage (e.g., 5 health points per excess unit)
+                    TakeDamage(damage); // Apply fall damage
                 }
                 isFalling = false; // Reset falling state
                 animator.SetBool("animateClimbing", false);
@@ -376,6 +386,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
 
     void OnCollisionExit(Collision collision)
     {
