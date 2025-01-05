@@ -25,7 +25,7 @@ public class FinalCheckPoint : MonoBehaviour
         }
     }
 
-    void ReturnToLevelSelect() //Returns to the level select menu
+    public void ReturnToLevelSelect() //Returns to the level select menu
     {
         SceneManager.LoadScene("Level-Select");
     }
