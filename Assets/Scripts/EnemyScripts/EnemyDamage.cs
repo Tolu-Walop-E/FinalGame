@@ -20,7 +20,7 @@ public class EnemyDamage : MonoBehaviour
         if (totalHealth <= 0)
         {
             Debug.Log("ran");
-            // ScoreTextEditor.score += 100;
+            //ScoreTextEditor.score += 100;
             Destroy(gameObject);
         }
     }
