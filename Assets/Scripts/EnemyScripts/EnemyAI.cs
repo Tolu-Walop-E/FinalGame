@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -8,13 +9,33 @@ public class EnemyAI : MonoBehaviour
     public float attackRange;
     private bool playerInRange;
     private Rigidbody rb;
+    
+    //Enemy walking AI
+    public NavMeshAgent agent;
+    //public LayerMask whatIsWalkable;
+    //private Vector3 initialPosition;
+    
+    //public Vector3 walkPoint;
+    //bool walkPointSet;
+    //public float walkPointRange;
+    
+    
 
     private void Start()
     {
         // Find the Player object in the scene
         player = GameObject.Find("Player").transform;
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
         
+        agent = GetComponent<NavMeshAgent>();
+        agent.updatePosition = false;
+        agent.updateRotation = false;
+
+        
+        //initialPosition = transform.position;
+        //MoveEnemy();
+
     }
 
     private void Update()
@@ -47,7 +68,6 @@ public class EnemyAI : MonoBehaviour
             // Turn enemy to face the player on the right or left side
             Vector2 direction = player.position - transform.position;
             transform.right = direction.x > 0 ? Vector2.right : Vector2.left;
-
         }
     }
 
@@ -69,7 +89,7 @@ public class EnemyAI : MonoBehaviour
             // Instantiate a projectile and launch it towards the player
             Instantiate(enemyProjectile, (transform.position + heightOffset), Quaternion.identity);
             Debug.Log("Projectile instantiated");
-            animator.SetBool("animateWalking",true);
+            animator.SetTrigger("animateProjectile");
         }
     }
 
@@ -83,8 +103,42 @@ public class EnemyAI : MonoBehaviour
             animator.SetTrigger("animateKicking");
         }
     }
+
+    // void MoveEnemy()
+    // {
+    //     //if the platform the enemy is on is walkable
+    //     //it can move up and down the platform
+    //     //whilst any player movement occurs
+    //     //the walk animation plays
+    //
+    //     if (!walkPointSet)
+    //     {
+    //         SearchForWalkPoint();
+    //     }
+    //     if (walkPointSet)
+    //     {
+    //         // Restricting movement to X-axis (keeping Y and Z constant)
+    //         Vector3 targetPosition = new Vector3(walkPoint.x, transform.position.y,0);
+    //         agent.SetDestination(targetPosition);
+    //
+    //         if (Vector3.Distance(transform.position, targetPosition) < 1f)
+    //         {
+    //             walkPointSet = false;
+    //         }
+    //     }
+    // }
     
-    //function moveEnenmy()
-        //animator.SetBool("animateWalking", true)
+    // private void SearchForWalkPoint()
+    // {
+    //     float randomX = Random.Range(-walkPointRange, walkPointRange);
+    //     // Restrict walkPoint to X-axis, keeping Y and Z constant
+    //     walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, 0);
+    //
+    //     if (Physics.Raycast(new Vector3(walkPoint.x, transform.position.y, 0), -transform.up, 2f, whatIsWalkable))
+    //     {
+    //         walkPointSet = true;
+    //     }
+    // }
+    
     
 }
