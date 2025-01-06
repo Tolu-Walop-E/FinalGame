@@ -7,6 +7,7 @@ public class EnemyAI : MonoBehaviour
     public GameObject enemyProjectile;
     public float attackRange;
     private bool playerInRange;
+    private Rigidbody rb;
 
     private void Start()
     {
@@ -72,8 +73,18 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void ChasePlayer()
-    {
 
+    void OnCollisionEnter(Collision collision)
+    {
+        // Prevent rotation in any axis
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            animator.SetTrigger("animateKicking");
+        }
     }
+    
+    //function moveEnenmy()
+        //animator.SetBool("animateWalking", true)
+    
 }

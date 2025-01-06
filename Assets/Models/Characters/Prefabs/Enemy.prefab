@@ -492,23 +492,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9fc11cac6f8647339de5319e7d213d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent: {fileID: 2082858097995036962}
   player: {fileID: 0}
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 128
-  whatIsPlayer:
-    serializedVersion: 2
-    m_Bits: 256
-  walkPoint: {x: 0, y: 0, z: 0}
-  walkPointRange: 5
-  timeBetweenAttacks: 1
-  projectile: {fileID: 0}
-  sightRange: 5
+  enemyProjectile: {fileID: 0}
   attackRange: 3
-  playerInSightRange: 0
-  playerInAttackRange: 0
-  accuracy: 100
 --- !u!114 &7477810796246047580
 MonoBehaviour:
   m_ObjectHideFlags: 0
