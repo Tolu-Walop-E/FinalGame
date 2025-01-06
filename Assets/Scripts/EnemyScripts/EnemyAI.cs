@@ -46,6 +46,7 @@ public class EnemyAI : MonoBehaviour
             // Turn enemy to face the player on the right or left side
             Vector2 direction = player.position - transform.position;
             transform.right = direction.x > 0 ? Vector2.right : Vector2.left;
+
         }
     }
 
@@ -67,7 +68,12 @@ public class EnemyAI : MonoBehaviour
             // Instantiate a projectile and launch it towards the player
             Instantiate(enemyProjectile, (transform.position + heightOffset), Quaternion.identity);
             Debug.Log("Projectile instantiated");
-            animator.SetTrigger("animateProjectile");
+            animator.SetBool("animateWalking",true);
         }
+    }
+
+    private void ChasePlayer()
+    {
+
     }
 }
