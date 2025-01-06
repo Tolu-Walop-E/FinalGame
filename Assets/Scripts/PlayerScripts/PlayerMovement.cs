@@ -378,6 +378,8 @@ public class PlayerMovement : MonoBehaviour
             // Check if the platform is climbable
             if (IsClimbable(collision.gameObject))
             {
+                animator.SetBool("animateWalking", false);
+                animator.SetBool("animateRunning", false);
                 animator.SetBool("animateClimbing", true); //replace with wall sliding
                 isTouchingWall = true;
                 Debug.Log("Touching climbable wall.");
